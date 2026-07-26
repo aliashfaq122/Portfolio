@@ -107,12 +107,34 @@ behavior:"smooth"
 
 /* Contact Form */
 
-document.querySelector(".contact-form").addEventListener("submit",(e)=>{
+const form = document.querySelector(".contact-form");
 
-e.preventDefault();
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-alert("Thank you! Your message has been sent.");
+    const button = form.querySelector("button");
+    button.disabled = true;
+    button.textContent = "Sending...";
 
-e.target.reset();
+    try {
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: new FormData(form),
+            headers: {
+                "Accept": "application/json"
+            }
+        });
 
+        if (response.ok) {
+            alert("✅ Thank you! Your message has been sent.");
+            form.reset();
+        } else {
+            alert("❌ Failed to send message.");
+        }
+    } catch (error) {
+        alert("❌ Something went wrong. Please try again.");
+    }
+
+    button.disabled = false;
+    button.textContent = "Send Message";
 });
